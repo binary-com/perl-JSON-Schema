@@ -489,7 +489,7 @@ sub jsMatchType
 
 	if (lc $type eq 'number')
 	{
-		return ($value =~ /^\-?[0-9]*(\.[0-9]*)?$/ and length $value) ? TRUE : FALSE;
+		return ($value =~ /^[-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/ and length $value) ? TRUE : FALSE;
 	}
 	
 	if (lc $type eq 'integer')

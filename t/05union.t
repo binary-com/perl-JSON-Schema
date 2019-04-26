@@ -166,4 +166,41 @@ $result = $schema3->validate({ test => undef });
 ok $result->valid, 'all types against null'
   or map { diag "reason: $_" } $result->errors;
 
+my $schema4 = JSON::Schema->new(
+                { type => 'object'
+                , additionalProperties => 0
+                , properties =>
+                        { test =>
+                                { type => [ qw/number/ ], required => 1 }
+                        }
+                } );
+
+$result = $schema4->validate({ test => 23 });
+ok $result->valid, 'number against integer'
+  or map { diag "reason: $_" } $result->errors;
+
+$result = $schema4->validate({ test => 0.00023 });
+ok $result->valid, 'number against decimal number'
+  or map { diag "reason: $_" } $result->errors;
+
+$result = $schema4->validate({ test => 0.000000023 });
+ok $result->valid, 'number against decimal number with more than 5 decimal places'
+  or map { diag "reason: $_" } $result->errors;
+
+$result = $schema4->validate({ test => -0.000000023 });
+ok $result->valid, 'number against negative number with more than 5 decimal places'
+  or map { diag "reason: $_" } $result->errors;
+
+$result = $schema4->validate({ test => 23e-05 });
+ok $result->valid, 'number against exponential number'
+  or map { diag "reason: $_" } $result->errors;
+
+$result = $schema4->validate({ test => "23" });
+ok $result->valid, 'number against number inside quotes is ok'
+  or map { diag "reason: $_" } $result->errors;
+
+$result = $schema4->validate({ test => "+123" });
+ok !$result->valid, 'number against number with explicit positive sign fails validation'
+  or map { diag "reason: $_" } $result->errors;
+
 done_testing;
